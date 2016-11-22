@@ -177,7 +177,7 @@ class RequestCriteria implements CriteriaInterface
 
             foreach ($fields as $row) {
                 try {
-                    list($field, $value) = explode(':', $row);
+                    list($field, $value) = explode(':', $row, 2);
                     $operator = "or";
                     if (stripos($field, '|')) {
                         list($operator, $field) = explode('|', $field);
