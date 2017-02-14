@@ -155,7 +155,7 @@ class RequestCriteria implements CriteriaInterface
             $model = $model->select($filter);
         }
 
-        if ($with) {
+        if (isset($with) && !empty($with)) {
             $with = explode(';', $with);
             $model = $model->with($with);
         }
