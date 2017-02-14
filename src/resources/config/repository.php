@@ -215,8 +215,9 @@ return [
             'filter'       => 'filter',
             'orderBy'      => 'orderBy',
             'sortedBy'     => 'sortedBy',
-            'with'         => 'with'
-        ]
+            'with'         => 'with',
+            'macro'        => 'macro',
+        ],
     ],
     /*
     |--------------------------------------------------------------------------
