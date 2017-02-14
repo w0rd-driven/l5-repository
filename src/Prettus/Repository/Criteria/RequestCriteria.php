@@ -42,6 +42,7 @@ class RequestCriteria implements CriteriaInterface
         $orderBy = $this->request->get(config('repository.criteria.params.orderBy', 'orderBy'), null);
         $sortedBy = $this->request->get(config('repository.criteria.params.sortedBy', 'sortedBy'), 'asc');
         $with = $this->request->get(config('repository.criteria.params.with', 'with'), null);
+        $macro = $this->request->get(config('repository.criteria.params.macro', 'macro'), null);
         $sortedBy = !empty($sortedBy) ? $sortedBy : 'asc';
 
         if ($search && is_array($fieldsSearchable) && count($fieldsSearchable)) {
@@ -155,9 +156,25 @@ class RequestCriteria implements CriteriaInterface
             $model = $model->select($filter);
         }
 
-        if ($with) {
+        if (isset($with) && !empty($with)) {
             $with = explode(';', $with);
             $model = $model->with($with);
+        }
+
+        if (isset($macro) && !empty($macro)) {
+            switch ($macro) {
+                case "withTrashed":
+                    $model = $model->withTrashed();
+                    break;
+                case "withoutTrashed":
+                    $model = $model->withoutTrashed();
+                    break;
+                case "onlyTrashed":
+                    $model = $model->onlyTrashed();
+                    break;
+                default:
+                    break;
+            }
         }
 
         return $model;
