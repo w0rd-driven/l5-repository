@@ -43,6 +43,7 @@ class RequestCriteria implements CriteriaInterface
         $sortedBy = $this->request->get(config('repository.criteria.params.sortedBy', 'sortedBy'), 'asc');
         $with = $this->request->get(config('repository.criteria.params.with', 'with'), null);
         $macro = $this->request->get(config('repository.criteria.params.macro', 'macro'), null);
+        $noEagerLoads = $this->request->get(config('repository.criteria.params.noEagerLoads', 'noEagerLoads'), false);
         $sortedBy = !empty($sortedBy) ? $sortedBy : 'asc';
 
         if ($search && is_array($fieldsSearchable) && count($fieldsSearchable)) {
@@ -175,6 +176,12 @@ class RequestCriteria implements CriteriaInterface
                 default:
                     break;
             }
+        }
+
+        if (isset($noEagerLoads)) {
+            $noEagerLoadsBoolean = filter_var($noEagerLoads, FILTER_VALIDATE_BOOLEAN);
+            if ($noEagerLoadsBoolean)
+                $model = $model->setEagerLoads([]);
         }
 
         return $model;
