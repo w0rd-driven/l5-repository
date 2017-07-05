@@ -70,7 +70,20 @@ class RequestCriteria implements CriteriaInterface
                     $isAndOperator = isset($searchData[$field]['operator']) && $searchData[$field]['operator'] === strtolower("and");
 
                     if (isset($searchData[$field]['value'])) {
-                        $value = ($condition == "like" || $condition == "ilike") ? "%{$searchData[$field]['value']}%" : $searchData[$field]['value'];
+                        switch ($condition) {
+                            case 'like':
+                            case 'ilike':
+                                $value = "%{$searchData[$field]['value']}%";
+                                break;
+                            case 'between':
+                                $fieldValue = $searchData[$field]['value'];
+                                $fieldValueArray = explode(',', $fieldValue);
+                                $value = $fieldValueArray;
+                                break;
+                            default:
+                                $value = $searchData[$field]['value'];
+                                break;
+                        }
                     } else {
                         if (!is_null($search)) {
                             $value = ($condition == "like" || $condition == "ilike") ? "%{$search}%" : $search;
@@ -91,7 +104,14 @@ class RequestCriteria implements CriteriaInterface
                                     $query->where($field,$condition,$value);
                                 });
                             } else {
-                                $query->where($modelTableName.'.'.$field,$condition,$value);
+                                switch ($condition) {
+                                    case 'between':
+                                        $query->whereBetween($modelTableName.'.'.$field,$value);
+                                        break;
+                                    default:
+                                        $query->where($modelTableName.'.'.$field,$condition,$value);
+                                        break;
+                                }
                             }
                             $isFirstField = false;
                         }
