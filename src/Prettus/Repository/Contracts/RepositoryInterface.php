@@ -32,10 +32,12 @@ interface RepositoryInterface
      *
      * @param null  $limit
      * @param array $columns
+     * @param string $pageName
+     * @param string $method
      *
      * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*']);
+    public function paginate($limit = null, $columns = ['*'], $pageName = 'page', $method = "paginate");
 
     /**
      * Retrieve all data of repository, simple paginated
@@ -148,7 +150,7 @@ interface RepositoryInterface
      * @return int
      */
     public function deleteWhere(array $where);
-    
+
     /**
      * Order collection by a given column
      *
