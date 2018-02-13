@@ -208,6 +208,8 @@ trait CacheableRepository
             return parent::all($columns);
         });
 
+        $this->resetModel();
+        $this->resetScope();
         return $value;
     }
 
@@ -221,7 +223,7 @@ trait CacheableRepository
      *
      * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*'], $pageName = 'page', $method = "paginate")
+    public function paginate($limit = null, $columns = ['*'], $pageName = 'page', $method = 'paginate')
     {
         if (!$this->allowedCache('paginate') || $this->isSkippedCache()) {
             return parent::paginate($limit, $columns, $method);
@@ -234,6 +236,8 @@ trait CacheableRepository
             return parent::paginate($limit, $columns, $method);
         });
 
+        $this->resetModel();
+        $this->resetScope();
         return $value;
     }
 
@@ -257,6 +261,8 @@ trait CacheableRepository
             return parent::find($id, $columns);
         });
 
+        $this->resetModel();
+        $this->resetScope();
         return $value;
     }
 
@@ -281,6 +287,8 @@ trait CacheableRepository
             return parent::findByField($field, $value, $columns);
         });
 
+        $this->resetModel();
+        $this->resetScope();
         return $value;
     }
 
@@ -304,6 +312,8 @@ trait CacheableRepository
             return parent::findWhere($where, $columns);
         });
 
+        $this->resetModel();
+        $this->resetScope();
         return $value;
     }
 
@@ -326,6 +336,8 @@ trait CacheableRepository
             return parent::getByCriteria($criteria);
         });
 
+        $this->resetModel();
+        $this->resetScope();
         return $value;
     }
 }

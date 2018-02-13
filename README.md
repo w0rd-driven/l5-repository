@@ -56,6 +56,12 @@ composer require prettus/l5-repository
 
 ### Laravel
 
+#### >= laravel5.5
+
+ServiceProvider will be attached automatically
+
+#### Other
+
 In your `config/app.php` add `Prettus\Repository\Providers\RepositoryServiceProvider::class` to the end of the `providers` array:
 
 ```php
@@ -74,7 +80,7 @@ $app->register(Prettus\Repository\Providers\LumenRepositoryServiceProvider::clas
 Publish Configuration
 
 ```shell
-php artisan vendor:publish
+php artisan vendor:publish --provider "Prettus\Repository\Providers\RepositoryServiceProvider"
 ```
 
 ## Methods
@@ -83,7 +89,7 @@ php artisan vendor:publish
 
 - all($columns = array('*'))
 - first($columns = array('*'))
-- paginate($limit = null, $columns = ['*'], $pageName = 'page')
+- paginate($limit = null, $columns = ['*'])
 - find($id, $columns = ['*'])
 - findByField($field, $value, $columns = ['*'])
 - findWhere(array $where, $columns = ['*'])
@@ -94,14 +100,16 @@ php artisan vendor:publish
 - updateOrCreate(array $attributes, array $values = [])
 - delete($id)
 - deleteWhere(array $where)
-- orderBy($column, $direction = 'asc')
-- with(array $relations)
-- hidden(array $fields)
-- visible(array $fields)
-- scopeQuery(Closure $scope)
-- getFieldsSearchable()
-- setPresenter($presenter)
-- skipPresenter($status = true)
+- orderBy($column, $direction = 'asc');
+- with(array $relations);
+- has(string $relation);
+- whereHas(string $relation, closure $closure);
+- hidden(array $fields);
+- visible(array $fields);
+- scopeQuery(Closure $scope);
+- getFieldsSearchable();
+- setPresenter($presenter);
+- skipPresenter($status = true);
 
 
 ### Prettus\Repository\Contracts\RepositoryCriteriaInterface
@@ -339,7 +347,7 @@ $posts = $this->repository->all();
 Find all results in Repository with pagination
 
 ```php
-$posts = $this->repository->paginate($limit = null, $columns = ['*'], $pageName = 'page');
+$posts = $this->repository->paginate($limit = null, $columns = ['*']);
 ```
 
 Find by result by id
@@ -422,10 +430,14 @@ Delete entry in Repository
 $this->repository->delete($id)
 ```
 
-Delete multiple entries in Repository
+Delete entry in Repository by multiple fields
 
 ```php
-$this->repository->deleteWhere($where)
+$this->repository->deleteWhere([
+    //Default Condition =
+    'state_id'=>'10',
+    'country_id'=>'15',
+])
 ```
 
 ### Create a Criteria
@@ -537,7 +549,7 @@ You can perform a dynamic search, filter the data and customize the queries.
 
 To use the Criteria in your repository, you can add a new criteria in the boot method of your repository, or directly use in your controller, in order to filter out only a few requests.
 
-####Enabling in your Repository
+#### Enabling in your Repository
 
 ```php
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -588,7 +600,7 @@ protected $fieldSearchable = [
 ```
 
 
-####Enabling in your Controller
+#### Enabling in your Controller
 
 ```php
 	public function index()
@@ -662,6 +674,22 @@ or
     }
 ]
 ```
+
+By default RequestCriteria makes its queries using the **OR** comparison operator for each query parameter.
+`http://prettus.local/users?search=age:17;email:john@gmail.com`
+
+The above example will execute the following query:
+``` sql
+SELECT * FROM users WHERE age = 17 OR email = 'john@gmail.com';
+```
+
+In order for it to query using the **AND**, pass the *searchJoin* parameter as shown below:
+
+`http://prettus.local/users?search=age:17;email:john@gmail.com&searchJoin=and`
+
+
+
+
 
 Filtering fields
 
@@ -738,7 +766,7 @@ Add relationship
 
 
 
-####Overwrite params name
+#### Overwrite params name
 
 You can change the name of the parameters in the configuration file **config/repository.php**
 
@@ -975,7 +1003,7 @@ The second way is to make your model implement the Transformable interface, and 
 php artisan make:transformer Post
 ```
 
-This wil generate the class beneath.
+This will generate the class beneath.
 
 ###### Create a Transformer Class
 

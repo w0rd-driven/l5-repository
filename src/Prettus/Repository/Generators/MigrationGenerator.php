@@ -28,7 +28,7 @@ class MigrationGenerator extends Generator
      */
     public function getBasePath()
     {
-        return app()->basePath() . '/database/migrations/';
+        return base_path() . '/database/migrations/';
     }
 
 

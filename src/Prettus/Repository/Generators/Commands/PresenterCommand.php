@@ -2,7 +2,6 @@
 namespace Prettus\Repository\Generators\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Prettus\Repository\Generators\FileAlreadyExistsException;
 use Prettus\Repository\Generators\PresenterGenerator;
 use Prettus\Repository\Generators\TransformerGenerator;
@@ -33,6 +32,15 @@ class PresenterCommand extends Command
      */
     protected $type = 'Presenter';
 
+    /**
+     * Execute the command.
+     *
+     * @see fire()
+     * @return void
+     */
+    public function handle(){
+        $this->laravel->call([$this, 'fire'], func_get_args());
+    }
 
     /**
      * Execute the command.
@@ -49,9 +57,7 @@ class PresenterCommand extends Command
             ]))->run();
             $this->info("Presenter created successfully.");
 
-            $filesystem = new Filesystem();
-
-            if (!$filesystem->exists(app()->path() . '/Transformers/' . $this->argument('name') . 'Transformer.php')) {
+            if (!\File::exists(app()->path() . '/Transformers/' . $this->argument('name') . 'Transformer.php')) {
                 if ($this->confirm('Would you like to create a Transformer? [y|N]')) {
                     (new TransformerGenerator([
                         'name'  => $this->argument('name'),

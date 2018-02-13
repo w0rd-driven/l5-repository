@@ -107,7 +107,7 @@ abstract class Generator
      */
     public function getBasePath()
     {
-        return app()->basePath();
+        return base_path();
     }
 
 
@@ -139,8 +139,19 @@ abstract class Generator
 
         return Str::studly(str_replace(' ', '/', ucwords(str_replace('/', ' ', $name))));
     }
+    
+    
+   /**
+     * Get application namespace
+     * 
+     * @return string
+     */
+    public function getAppNamespace()
+    {
+        return \Illuminate\Container\Container::getInstance()->getNamespace();
+    }
 
-
+    
     /**
      * Get class name.
      *
@@ -171,23 +182,6 @@ abstract class Generator
     public function getRootNamespace()
     {
         return config('repository.generator.rootNamespace', $this->getAppNamespace());
-    }
-
-    /**
-     * @return int|string
-     * @throws RuntimeException
-     */
-    public function getAppNamespace()
-    {
-        $composer = json_decode(file_get_contents(base_path('composer.json')), true);
-        foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
-            foreach ((array) $path as $pathChoice) {
-                if (realpath(app()->path()) == realpath(app()->basePath().'/'.$pathChoice)) {
-                    return $namespace;
-                }
-            }
-        }
-        throw new RuntimeException('Unable to detect application namespace.');
     }
 
 
@@ -243,9 +237,6 @@ abstract class Generator
     }
 
 
-    /**
-     * @return mixed
-     */
     abstract public function getPathConfigNode();
 
 
