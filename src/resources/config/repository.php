@@ -52,7 +52,7 @@ return [
          | Enable or disable cache
          |
          */
-        'enabled'    => true,
+        'enabled'    => false,
 
         /*
          |--------------------------------------------------------------------------
@@ -230,6 +230,7 @@ return [
     'generator'  => [
         'basePath'      => app()->path(),
         'rootNamespace' => 'App\\',
+        'stubsOverridePath' => app()->path(),
         'paths'         => [
             'models'       => 'Entities',
             'repositories' => 'Repositories',
@@ -240,7 +241,6 @@ return [
             'controllers'  => 'Http/Controllers',
             'provider'     => 'RepositoryServiceProvider',
             'criteria'     => 'Criteria',
-            'stubsOverridePath' => app()->path(),
         ],
     ],
 ];
