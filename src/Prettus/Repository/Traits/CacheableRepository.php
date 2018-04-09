@@ -202,7 +202,21 @@ trait CacheableRepository
             return parent::all($columns);
         }
 
-        $key = $this->getCacheKey('all', func_get_args());
+        $args = func_get_args();
+        if ($this->model instanceof \Illuminate\Database\Eloquent\Builder) {
+            $query = $this->model->getQuery();
+            $bindings = $query->getBindings();
+            $sql = $query->toSql();
+            $args = array_merge(
+                $args,
+                [
+                    $bindings,
+                    $sql
+                ]
+            );
+        }
+
+        $key = $this->getCacheKey('all', $args);
         $minutes = $this->getCacheMinutes();
         $value = $this->getCacheRepository()->remember($key, $minutes, function () use ($columns) {
             return parent::all($columns);
